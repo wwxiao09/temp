@@ -37,4 +37,79 @@ router.post("/newShip/", function(req, res){
   });
 });
 
+/**
+ * Tell Express.js that when there is a GET request at /getShip/name, to do this code.
+ */
+ router.get("/getShip/name",  (req, res) => {
+  // look up documents in MongoDB by name
+  Ship.findOne({name: req.body.name}, (err, doc) => {
+    // if there was an error
+    if (err) {
+      console.error("Error finding ship", err);
+      res.status(500).send(err);
+    }
+    // if no document was found
+    else if (!doc) {
+      console.error("No ship found", err);
+      res.status(404).send(err);
+    }
+    // a document was found, return it
+    else {
+      res.send(doc);
+    }
+  });
+});
+
+/**
+ * Tell Express.js that when there is a GET request at /getShip/secondaryBattery, to do this code.
+ */
+ router.get("/getShip/secondaryBattery", (req, res) => {
+  // look up documents in MongoDB by secondaryBattery
+  Ship.find({secondaryBattery: req.body.secondaryBattery}, (err, doc) => {
+    // if there was an error
+    if (err) {
+      console.error("Error finding ship", err);
+      res.status(500).send(err);
+    } 
+    // if no documents were found
+    else if (!doc) {
+      console.error("No ships found", err);
+      res.status(404).send(err);
+    } 
+    // some documents were found, return them
+    else {
+      res.send(doc);
+    }
+  });
+});
+
+/**
+ * Tell Express.js that when there is a PATCH request at /updateShip, do the following code
+ */
+ router.patch("/updateShip", (req, res) => {
+  // if no ship name is given in the request
+  if (!("name" in req.body)) {
+    console.error("No name in request");
+    res.status(400).send("No name in request");
+  }
+  else {
+    Ship.findOneAndUpdate({name: req.body.name}, req.body, (err, doc) => {
+      // if there was an error
+      if (err) {
+        console.error("Error updating ship", err);
+        res.status(500).send(err);
+      }
+      // if no document was found
+      else if (!doc) {
+        console.error("No ship found", err);
+        res.status(404).send(err);
+      }
+      // return the updated document
+      else {
+        res.send(doc);
+      }
+    });
+  }
+});
+
 module.exports = router;
